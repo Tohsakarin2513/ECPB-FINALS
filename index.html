@@ -1,0 +1,824 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>EPCTech — Computer Repair</title>
+  <style>
+    :root {
+      color-scheme: dark;
+      --ink: #f4f7ff;
+      --blue: #1489ed;
+      --navy: #070b1b;
+      --panel: rgba(125, 139, 155, .72);
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      color: var(--ink);
+      font-family: Arial, Helvetica, sans-serif;
+      background: #080c1c url("https://uploads.onecompiler.io/44yjqfzs2/44yjqgt9c/gaming-setup-with-multiple-monitor_1087929-22721.avif") center / cover fixed no-repeat;
+    }
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      z-index: -1;
+      background: rgba(5, 9, 25, .34);
+    }
+    .topbar {
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      min-height: 56px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: clamp(8px, 4vw, 58px);
+      padding: 8px 18px;
+      background: #e4edff;
+      border: 1px solid #9ab8ee;
+      box-shadow: 0 2px 10px #0004;
+    }
+    .topbar a {
+      color: #101729;
+      text-decoration: none;
+      font-size: clamp(12px, 1.6vw, 16px);
+      white-space: nowrap;
+      padding: 8px 10px;
+      border-radius: 10px;
+      transition: background .18s, color .18s;
+    }
+    .topbar a:hover, .topbar a.active { background: #cbd7ff; color: #073d8f; }
+    main { min-height: calc(100vh - 56px); display: grid; place-items: center; padding: 34px 18px; }
+    .view { display: none; width: min(100%, 920px); }
+    .view.active { display: block; animation: appear .25s ease-out; }
+    @keyframes appear { from { opacity: .45; transform: translateY(5px); } to { opacity: 1; transform: none; } }
+    .auth-card {
+      width: min(100%, 500px);
+      margin: 0 auto;
+      padding: 30px clamp(22px, 6vw, 55px);
+      text-align: center;
+      border: 1px solid rgba(255,255,255,.25);
+      border-radius: 14px;
+      background: var(--panel);
+      box-shadow: 0 18px 55px #0006;
+      backdrop-filter: blur(4px);
+    }
+    .brand-logo { display: block; width: 112px; height: 112px; object-fit: contain; margin: 0 auto 12px; border-radius: 20px; }
+    h1, h2 { margin: 0 0 18px; text-shadow: 0 2px 4px #18243a88; }
+    h1 { font-size: clamp(25px, 4vw, 34px); }
+    h2 { font-size: 24px; }
+    .field { display: block; width: 100%; height: 42px; margin: 10px 0; padding: 0 15px; border: 1px solid #d5d9e0; border-radius: 24px; background: #f2f3f5; color: #182033; font: inherit; text-align: center; outline: none; }
+    .field:focus { border-color: #168afa; box-shadow: 0 0 0 3px #168afa44; }
+    .forgot { display: block; width: fit-content; margin: -3px auto 10px; color: #fff; font-size: 14px; text-decoration: underline; }
+    .button { display: inline-block; border: 1px solid #77baff; border-radius: 5px; padding: 10px 24px; background: #087be3; color: white; font: inherit; text-decoration: none; cursor: pointer; box-shadow: 0 3px 10px #00193666; }
+    .button:hover { background: #0067c5; }
+    .button.secondary { background: #18284b; border-color: #889ac4; }
+    .form-note { min-height: 20px; margin: 10px 0 0; font-size: 14px; color: #fff; }
+    .auth-switch { margin: 17px 0 0; font-size: 14px; }
+    .auth-switch a { color: #fff; font-weight: bold; }
+    .signup-card { width: min(100%, 680px); }
+    .section-title { margin: 24px 0 10px; font-size: 21px; }
+    .signup-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0 16px; }
+    .signup-grid .field { margin: 8px 0; }
+    .hero {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      min-height: 430px;
+      overflow: hidden;
+      border-radius: 20px;
+      background: linear-gradient(135deg, #9ceaff, #0063c3 56%, #050914 56%);
+      box-shadow: 0 20px 60px #0008;
+    }
+    .hero-copy { margin: 30px; padding: clamp(22px, 5vw, 48px); align-self: center; border: 1px solid #d6f3ff88; border-radius: 45px 16px 45px 16px; background: linear-gradient(145deg, #7acfffaa, #03162dd9 78%); }
+    .eyebrow { margin: 0 0 22px; letter-spacing: .16em; font-size: 12px; }
+    .hero-copy h1 { margin: 0 0 22px; font-size: clamp(36px, 6vw, 60px); line-height: 1.02; }
+    .hero-copy p { margin: 0 0 35px; letter-spacing: .12em; }
+    .hero-brand { display: grid; place-items: center; margin: 30px; border-radius: 34px; background: rgba(31, 0, 40, .91); }
+    .hero-brand img { width: min(75%, 275px); height: auto; border-radius: 18px; }
+    .content-card { max-width: 760px; margin: auto; padding: clamp(25px, 6vw, 55px); border-radius: 16px; background: rgba(15, 24, 45, .88); box-shadow: 0 14px 45px #0008; text-align: center; }
+    .content-card p { line-height: 1.7; }
+    .content-card .button { margin-top: 12px; }
+    .view.wide-view { width: min(100%, 1100px); }
+    .learn-page { overflow: hidden; border-radius: 18px; background: #030914; box-shadow: 0 18px 55px #0009; }
+    .learn-hero { min-height: 470px; display: grid; grid-template-columns: 1fr 1.2fr; align-items: center; gap: 25px; padding: clamp(24px, 5vw, 55px); background: linear-gradient(180deg, #02050d 20%, #0753a8 68%, #a7eaff); }
+    .learn-brand img { width: 135px; height: 135px; object-fit: contain; border-radius: 22px; }
+    .learn-hero h1 { font-size: clamp(38px, 7vw, 62px); line-height: 1.02; }
+    .learn-hero p { line-height: 1.5; letter-spacing: .08em; }
+    .learn-hero-art { width: 100%; max-height: 280px; object-fit: contain; border-radius: 14px; }
+    .offer-section, .packages-section { padding: clamp(28px, 6vw, 58px); }
+    .offer-section { min-height: 420px; display: grid; grid-template-columns: 1fr 1fr; align-items: center; gap: 28px; }
+    .offer-section h2, .packages-section h2 { font-size: clamp(32px, 5vw, 48px); }
+    .offer-list { display: grid; gap: 16px; }
+    .offer-pill { border: 1px solid #c5ecff; border-radius: 30px; padding: 13px 20px; text-align: center; background: linear-gradient(#1689ed, #9ceaff); color: #fff; text-shadow: 0 1px 3px #123; }
+    .offer-art { width: 100%; max-height: 300px; object-fit: contain; }
+    .packages-section { background: linear-gradient(145deg, #04172f, #0870d5 72%, #b3eaff); }
+    .packages-section > p { max-width: 450px; line-height: 1.5; }
+    .package-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; margin-top: 28px; }
+    .package-card { padding: 18px; border: 1px solid #c8eaff99; border-radius: 18px; background: #c7eaffb8; color: #17253d; }
+    .package-card h3 { margin-top: 0; }
+    .package-card ul { padding-left: 20px; line-height: 1.5; }
+    .build-page { max-width: 900px; margin: auto; padding: clamp(20px, 4vw, 42px); border-radius: 18px; background: rgba(4, 8, 23, .86); text-align: center; box-shadow: 0 18px 55px #0009; }
+    .build-page > img { display: block; width: 100%; max-height: 490px; object-fit: cover; border-radius: 14px; }
+    .build-actions { display: flex; justify-content: center; flex-wrap: wrap; gap: 18px; margin-top: 22px; }
+    .parts-page { min-height: 570px; padding: clamp(20px, 4vw, 38px); border-radius: 18px; background: rgba(5, 9, 24, .88); text-align: center; box-shadow: 0 18px 55px #0009; }
+    .parts-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; align-items: center; }
+    .part-card { display: grid; justify-items: center; gap: 18px; }
+    .part-card img, .part-icon-placeholder { width: min(100%, 310px); height: 230px; object-fit: contain; padding: 12px; border-radius: 10px; background: #f7f8fa; }
+    .part-icon-placeholder { display: grid; place-items: center; color: #087be3; font-size: 86px; }
+    .part-card .button { background: #18284b; border-color: #889ac4; }
+    .catalog-page, .product-page { min-height: 570px; padding: clamp(20px, 4vw, 38px); border-radius: 18px; background: rgba(5, 9, 24, .88); box-shadow: 0 18px 55px #0009; }
+    .catalog-page h1 { text-align: center; margin-bottom: 18px; }
+    .catalog-search { display: block; width: min(100%, 460px); margin: 0 auto 22px; }
+    .product-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 18px; }
+    .product-tile { min-width: 0; padding: 12px; border-radius: 12px; background: #f2f4f7; color: #152039; text-align: center; }
+    .product-tile a { color: inherit; text-decoration: none; font-weight: bold; }
+    .product-tile img { display: block; width: 100%; height: 150px; object-fit: contain; }
+    .product-tile a:hover { color: #087be3; text-decoration: underline; }
+    .catalog-empty { grid-column: 1 / -1; text-align: center; }
+    .product-page { position: relative; }
+    .back-button { display: inline-flex; align-items: center; gap: 8px; margin-bottom: 18px; color: white; text-decoration: none; font-weight: bold; }
+    .back-button:hover { color: #9ceaff; }
+    .product-detail { display: grid; grid-template-columns: 1fr 1.2fr; align-items: center; gap: 30px; }
+    .product-detail img { width: 100%; max-height: 430px; object-fit: contain; border-radius: 14px; background: #f7f8fa; }
+    .product-specs { padding: 20px; border-radius: 14px; background: #e6e9ed; color: #182033; }
+    .product-specs h1 { font-size: clamp(23px, 4vw, 34px); }
+    .product-specs ul { padding-left: 20px; line-height: 1.55; white-space: pre-line; }
+    .product-specs .button { display: block; width: fit-content; min-width: 180px; margin: 18px auto 0; border-radius: 24px; text-align: center; }
+    @media (max-width: 800px) { .product-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+    @media (max-width: 650px) {
+      .topbar { justify-content: space-between; gap: 0; padding: 6px 5px; }
+      .topbar a { padding: 8px 5px; font-size: 11px; }
+      main { padding: 22px 12px; }
+      .hero { grid-template-columns: 1fr; }
+      .hero-copy { margin: 18px; }
+      .hero-brand { min-height: 250px; margin: 0 18px 18px; }
+      .learn-hero, .offer-section { grid-template-columns: 1fr; }
+      .learn-hero { text-align: center; }
+      .learn-brand img { margin: auto; }
+      .package-grid, .parts-grid { grid-template-columns: 1fr; }
+      .part-card img { height: 190px; }
+      .product-detail { grid-template-columns: 1fr; }
+      .product-tile img { height: 125px; }
+    }
+    @media (max-width: 430px) { .signup-grid { grid-template-columns: 1fr; } }
+  </style>
+  <link rel="stylesheet" href="styles1.css">
+</head>
+<body>
+  <nav class="topbar" aria-label="Main navigation">
+    <a href="#home" data-page="home">HOME</a>
+    <a href="#cart" data-page="cart">MY CART</a>
+    <a href="#transaction" data-page="transaction">TRANSACTION</a>
+    <a href="#about" data-page="about">ABOUT US!</a>
+    <a href="#contact" data-page="contact">CONTACT US!</a>
+    <a href="#user" data-page="user" id="user-nav-link">ACCOUNT · NOT LOGGED IN</a>
+  </nav>
+  <main>
+    <section class="view" id="login" aria-label="Login">
+      <form class="auth-card" id="login-form">
+        <img class="brand-logo" src="https://uploads.onecompiler.io/44yjqfzs2/44yjqgt9c/EPC.png" alt="EPC Tech logo">
+        <h1>Welcome Back</h1>
+        <input class="field" type="email" name="email" placeholder="Email Address" aria-label="Email Address" required>
+        <a class="forgot" href="#forgot">Forgot Password?</a>
+        <input class="field" type="password" name="password" placeholder="Password" aria-label="Password" required>
+        <button class="button" type="submit">Login</button>
+        <p class="form-note" id="login-note" aria-live="polite"></p>
+        <p class="auth-switch">New here? <a href="#signup" data-page="signup">Sign Up</a></p>
+      </form>
+    </section>
+
+    <section class="view" id="signup" aria-label="Sign Up">
+      <form class="auth-card signup-card" id="signup-form">
+        <h1>Create Account</h1>
+        <h2 class="section-title">Login Details</h2>
+        <div class="signup-grid">
+          <input class="field" type="email" name="email" placeholder="Email Address" aria-label="Email Address" required>
+          <input class="field" type="password" name="password" placeholder="Password" aria-label="Password" minlength="6" required>
+        </div>
+        <h2 class="section-title">User Details</h2>
+        <div class="signup-grid">
+          <input class="field" type="text" name="firstName" placeholder="First Name" aria-label="First Name" required>
+          <input class="field" type="tel" name="contact" placeholder="Contact Number" aria-label="Contact Number" required>
+          <input class="field" type="text" name="lastName" placeholder="Last Name" aria-label="Last Name" required>
+          <input class="field" type="text" name="address" placeholder="Address" aria-label="Address" required>
+        </div>
+        <button class="button" type="submit">Sign Up</button>
+        <p class="form-note" id="signup-note" aria-live="polite"></p>
+        <p class="auth-switch">Already registered? <a href="#login" data-page="login">Login</a></p>
+      </form>
+    </section>
+
+    <section class="view" id="home" aria-label="Home">
+      <div class="hero">
+        <div class="hero-copy">
+          <p class="eyebrow">CREATIVE STUDIO + LAB</p>
+          <h1>Let's get<br>digital</h1>
+          <p>EASY WAY TO BUILD YOUR PC</p>
+          <a class="button" href="#learn-more" data-page="learn-more">LEARN MORE.</a>
+        </div>
+        <div class="hero-brand"><img src="https://uploads.onecompiler.io/44yjqfzs2/44yjqgt9c/EPC.png" alt="EPC Tech — computer repair"></div>
+      </div>
+    </section>
+
+    <section class="view wide-view" id="learn-more" aria-label="Learn more">
+      <div class="learn-page">
+        <section class="learn-hero">
+          <div>
+            <div class="learn-brand"><img src="https://uploads.onecompiler.io/44yjqfzs2/44yjqgt9c/EPC.png" alt="EPCTech logo"></div>
+            <h1>Grow your<br>presence.</h1>
+            <p>EPC HELPS YOU TO BUILD YOUR DREAM PC AND GIVES YOU AFFORDABLE SERVICES</p>
+            <a class="button" href="#build-options" data-page="build-options">Build Now →</a>
+          </div>
+          <img class="learn-hero-art" src="https://uploads.onecompiler.io/44yjqfzs2/1793202307977/f2d452ac-23e7-4d8d-a880-7c25a2e5c14f.jpg" alt="Gaming computer setup">
+        </section>
+        <section class="offer-section">
+          <div>
+            <h2>What we offer</h2>
+            <div class="offer-list">
+              <div class="offer-pill">PREMIUM BUILDS</div>
+              <div class="offer-pill">FAST AND RELIABLE</div>
+              <div class="offer-pill">FAIR PRICE</div>
+            </div>
+          </div>
+          <img class="offer-art" src="https://uploads.onecompiler.io/44yjqfzs2/1793202326204/0cbc7324-1843-4b8f-b88e-751fbbf8dbe8.jpg" alt="Custom PC build">
+        </section>
+        <section class="packages-section">
+          <h2>Our packages</h2>
+          <p>Choose from our affordable and customizable computer build packages.</p>
+          <div class="package-grid">
+            <article class="package-card"><h3>ENTRY LEVEL CLASS</h3><ul><li>AMD CPU 5th–7th Gen / Intel 13th Gen</li><li>Entry-level graphics and storage</li><li>Great for everyday computing</li></ul></article>
+            <article class="package-card"><h3>HIGH END CLASS</h3><ul><li>AMD CPU 7th–9th Gen / Intel 13th Gen Ultra</li><li>Mid-to-high-tier graphics</li><li>For demanding games and creative work</li></ul></article>
+            <article class="package-card"><h3>ENTHUSIAST CLASS</h3><ul><li>Enthusiast-range CPU and graphics</li><li>High-speed DDR5 memory</li><li>Storage Upto 2-4TB GEN 5 NVME</li></ul></article>
+          </div>
+        </section>
+      </div>
+    </section>
+
+    <section class="view" id="build-options" aria-label="Build or compare parts">
+      <div class="build-page">
+        <h1>Build or Compare Parts</h1>
+        <img src="https://uploads.onecompiler.io/44yjqfzs2/1793202307977/f2d452ac-23e7-4d8d-a880-7c25a2e5c14f.jpg" alt="Gaming PC parts and setup">
+        <div class="build-actions">
+          <a class="button" href="#explore-parts" data-page="explore-parts">Build Your PC Here</a>
+          <a class="button secondary" href="https://www.techpowerup.com/" target="_blank" rel="noopener">Compare Parts Here</a>
+        </div>
+      </div>
+    </section>
+
+    <section class="view" id="explore-parts" aria-label="Explore PC parts">
+      <div class="parts-page">
+        <h1>Explore Parts</h1>
+        <div class="parts-grid">
+          <div class="part-card">
+            <img src="https://uploads.onecompiler.io/44yjqfzs2/1793202653919/images%20(1).png" alt="CPU illustration">
+            <a class="button" href="#cpu-catalog" data-page="cpu-catalog">Explore CPU</a>
+          </div>
+          <div class="part-card">
+            <img src="https://uploads.onecompiler.io/44yjqfzs2/1793202644717/images.png" alt="Graphics card illustration">
+            <a class="button" href="#gpu-catalog" data-page="gpu-catalog">Explore GPU</a>
+          </div>
+          <div class="part-card">
+            <img src="https://uploads.onecompiler.io/44yjqfzs2/457hkuuaa/ram-icon-vector.jpg" alt="RAM memory icon">
+            <a class="button" href="#component-catalog" data-component-key="ram">Explore RAM</a>
+          </div>
+          <div class="part-card">
+            <img src="https://uploads.onecompiler.io/44yjqfzs2/457hkuuaa/pngtree-ssd-storage-computer-pc-black-png-image_6387334.png" alt="Storage drive icon">
+            <a class="button" href="#component-catalog" data-component-key="storage">Explore Storage</a>
+          </div>
+          <div class="part-card">
+            <img src="https://uploads.onecompiler.io/44yjqfzs2/457hkuuaa/power-supply-line-icon-free-vector.jpg" alt="Power supply icon">
+            <a class="button" href="#component-catalog" data-component-key="power">Explore Power Supply</a>
+          </div>
+          <div class="part-card">
+            <img src="https://uploads.onecompiler.io/44yjqfzs2/457hkuuaa/3140594-200.png" alt="Computer case icon">
+            <a class="button" href="#component-catalog" data-component-key="case">Explore Case</a>
+          </div>
+          <div class="part-card">
+            <img src="https://uploads.onecompiler.io/44yjqfzs2/457jtj4yp/AORUSB550MAM4.png" alt="Motherboard icon">
+            <a class="button" href="#component-catalog" data-component-key="motherboard">Explore Motherboards</a>
+          </div>
+          <div class="part-card">
+            <div class="part-icon-placeholder" aria-hidden="true">🌀</div>
+            <a class="button" href="#component-catalog" data-component-key="fans">Explore Fans</a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="view" id="component-catalog" aria-label="PC component catalog">
+      <div class="catalog-page">
+        <a class="back-button" href="#explore-parts" data-page="explore-parts">← Back to parts</a>
+        <h1 id="component-catalog-title">Component Catalog</h1>
+        <input class="field catalog-search" id="component-search" type="search" placeholder="Search by product name..." aria-label="Search components">
+        <div class="product-grid" id="component-product-grid"></div>
+      </div>
+    </section>
+    <section class="view" id="component-detail" aria-label="Component product details">
+      <div class="product-page">
+        <a class="back-button" href="#component-catalog" data-page="component-catalog">← Back to products</a>
+        <div class="product-detail" id="component-detail-content"></div>
+      </div>
+    </section>
+
+    <section class="view" id="gpu-catalog" aria-label="Graphics card catalog">
+      <div class="catalog-page">
+        <a class="back-button" href="#explore-parts" data-page="explore-parts" aria-label="Back to parts">← Back to parts</a>
+        <h1>Graphics Card Catalog</h1>
+        <input class="field catalog-search" id="product-search" type="search" placeholder="Search by product name..." aria-label="Search products">
+        <div class="product-grid" id="product-grid"></div>
+      </div>
+    </section>
+    <section class="view" id="product-detail" aria-label="Graphics card product details">
+      <div class="product-page">
+        <a class="back-button" href="#gpu-catalog" data-page="gpu-catalog">← Back to products</a>
+        <div class="product-detail" id="product-detail-content"></div>
+      </div>
+    </section>
+    <section class="view" id="cpu-catalog" aria-label="Processor catalog">
+      <div class="catalog-page">
+        <a class="back-button" href="#explore-parts" data-page="explore-parts">← Back to parts</a>
+        <h1>Processor Catalog</h1>
+        <input class="field catalog-search" id="cpu-search" type="search" placeholder="Search by processor name..." aria-label="Search processors">
+        <div class="product-grid" id="cpu-product-grid"></div>
+      </div>
+    </section>
+    <section class="view" id="cpu-product-detail" aria-label="Processor product details">
+      <div class="product-page">
+        <a class="back-button" href="#cpu-catalog" data-page="cpu-catalog">← Back to processors</a>
+        <div class="product-detail" id="cpu-product-detail-content"></div>
+      </div>
+    </section>
+
+    <section class="view" id="user" aria-label="User account"><div class="content-card account-card"><h1>Your Account</h1><p id="account-status" class="account-status" aria-live="polite">You are not logged in.</p><p id="account-email"></p><a class="button" id="account-login-link" href="#login" data-page="login">Go to Login</a><button class="button secondary" id="logout-button" type="button" hidden>Log Out</button></div></section>
+    <section class="view wide-view" id="cart" aria-label="My Cart">
+      <div class="cart-page">
+        <h1>MY CART</h1>
+        <div class="cart-layout">
+          <section class="cart-panel order-panel" aria-labelledby="order-items-title">
+            <h2 id="order-items-title">ORDER ITEMS</h2>
+            <div id="cart-items" aria-live="polite"><p class="cart-empty">YOUR CART IS EMPTY. ADD SOME ITEM FROM THE PARTS SECTION</p></div>
+          </section>
+          <aside class="cart-panel summary-panel" aria-labelledby="order-summary-title">
+            <h2 id="order-summary-title">ORDER SUMMARY</h2>
+            <div class="summary-line"><span>SUBTOTAL:</span><strong id="cart-subtotal">₱0.00</strong></div>
+            <div class="summary-line"><span>BUILD LABOR:</span><strong id="cart-labor">₱0.00</strong></div>
+            <div class="summary-line summary-total"><span>TOTAL:</span><strong id="cart-total">₱0.00</strong></div>
+            <button class="button checkout-button" id="checkout-button" type="button">CHECK OUT</button>
+            <p class="form-note" id="checkout-note" aria-live="polite"></p>
+            <a class="button secondary more-parts-button" href="#explore-parts" data-page="explore-parts">VIEW MORE PARTS</a>
+          </aside>
+        </div>
+      </div>
+    </section>
+    <section class="view wide-view" id="transaction" aria-label="Transaction history">
+      <div class="transaction-page">
+        <h1>TRANSACTIONS</h1>
+        <div id="transaction-history" class="transaction-history" aria-live="polite"></div>
+        <a class="button" href="#home" data-page="home">Back to Home</a>
+      </div>
+    </section>
+    <section class="view wide-view" id="about" aria-label="About Us">
+      <div class="about-page">
+        <h1>About Us</h1>
+        <img class="about-image" src="https://uploads.onecompiler.io/44yjqfzs2/1793202326204/0cbc7324-1843-4b8f-b88e-751fbbf8dbe8.jpg" alt="Custom PC build">
+        <p>Welcome to EPCB (Elijah’s Personal Computer Builds) — your trusted destination for custom PC builds, computer parts, repairs, and maintenance.</p>
+        <p>Founded in 2021, EPCB started with a simple goal: to help people find the right computer parts and build a PC that fits their needs and budget. From low-end and budget-friendly computers to high-end gaming and performance builds, we provide solutions for different types of users.</p>
+        <p>As a computer technician specializing in custom PC builds, PC cleaning, and PC repair, EPCB focuses on providing practical recommendations and quality service. We understand that choosing computer components can be difficult, especially with so many options available. That’s why our website makes it easier to explore specifications, view parts, compare different hardware, check prices, and plan your ideal PC build.</p>
+        <p>Whether you are building your first budget PC, upgrading your current system, or planning a high-end gaming setup, EPCB is here to help you make better and smarter decisions about your computer.</p>
+        <div class="about-values">
+          <article><h2>Our Mission</h2><p>Our mission is to make PC building simple, accessible, and easier to understand by providing useful information, hardware comparisons, and reliable computer services.</p></article>
+          <article><h2>Our Vision</h2><p>Our vision is to become a trusted PC-building platform where anyone can confidently plan, compare, and create their ideal computer build—from entry-level systems to high-end performance machines.</p></article>
+        </div>
+        <p class="about-tagline">EPCB — Build It. Compare It. Make It Yours.</p>
+      </div>
+    </section>
+    <section class="view wide-view" id="contact" aria-label="Contact Us">
+      <div class="contact-page">
+        <h1>Contact Us</h1>
+        <p class="contact-intro">Get in touch with EPCB for computer builds, parts, repairs, and maintenance.</p>
+        <div class="contact-grid">
+          <a class="contact-card" href="https://www.facebook.com/elijah.masangcay.31" target="_blank" rel="noopener">
+            <img src="https://uploads.onecompiler.io/44yjqfzs2/457jtj4yp/facebook-messenger--v1.jpg" alt="Facebook Messenger">
+            <strong>Facebook</strong><span>facebook.com/elijah.masangcay.31</span>
+          </a>
+          <div class="contact-card">
+            <img src="https://uploads.onecompiler.io/44yjqfzs2/457jtj4yp/images%20(2).png" alt="Phone">
+            <strong>Mobile Number</strong><a href="tel:09982891967">09982891967</a><a href="tel:09918764909">09918764909</a>
+          </div>
+          <a class="contact-card" href="mailto:jacobmasangcay5@gmail.com">
+            <img src="https://uploads.onecompiler.io/44yjqfzs2/457jtj4yp/istockphoto-2052093189-612x612.jpg" alt="Email">
+            <strong>Email</strong><span>jacobmasangcay5@gmail.com</span>
+          </a>
+        </div>
+      </div>
+    </section>
+  </main>
+  <script>
+    const pageIds = ['login', 'signup', 'home', 'learn-more', 'build-options', 'explore-parts', 'gpu-catalog', 'product-detail', 'cpu-catalog', 'cpu-product-detail', 'component-catalog', 'component-detail', 'user', 'cart', 'transaction', 'about', 'contact'];
+    let activeProduct = null;
+    let activeCpuProduct = null;
+    let activeComponentProduct = null;
+    let activeComponentKey = 'ram';
+    let componentCatalogScrollTop = 0;
+    let catalogScrollTop = 0;
+    let cpuCatalogScrollTop = 0;
+    const cartProducts = [];
+    const products = [
+      { id: 'rog-astral-5090', name: 'ROG ASTRAL 5090', image: 'https://uploads.onecompiler.io/44yjqfzs2/457hkuuaa/ROG5090.webp', specs: ['Graphics Engine: NVIDIA GeForce RTX 5090', 'CUDA Cores: 21,760', 'Video Memory: 32GB GDDR7', 'Memory Interface: 512-bit', 'Memory Speed: 28 Gbps', 'Bus Standard: PCI Express 5.0', 'Price: ₱423,250.00', 'Recommended PSU: 1000W (varies by specific OC/LC variant)', 'Engine Clock: OC mode 2610 MHz; Default mode 2580 MHz (Boost Clock)'] },
+      { id: 'rog-astral-5080', name: 'ROG ASTRAL 5080', image: 'https://uploads.onecompiler.io/44yjqfzs2/457hkuuaa/ROG5080.webp', specs: ['ASUS ROG ASTRAL GeForce RTX 5080 OC Edition', 'Graphics Engine: NVIDIA GeForce RTX 5080', 'CUDA Cores: 10,752', 'Video Memory: 16GB GDDR7', 'Memory Interface: 256-bit', 'Memory Speed: 30 Gbps', 'Bus Standard: PCI Express 5.0', 'Price: ₱120,550.00–₱135,090.00', 'Recommended PSU: 850W–1000W', 'Engine Clock: OC 2790 MHz; Default 2760 MHz (Boost Clock)'] },
+      { id: 'gigabyte-aorus-5090', name: 'GIGABYTE AORUS 5090', image: 'https://uploads.onecompiler.io/44yjqfzs2/457hkuuaa/GIGA5090.jpg', specs: ['GIGABYTE AORUS GeForce RTX 5090 MASTER 32G', 'Graphics Engine: NVIDIA GeForce RTX 5090', 'CUDA Cores: 21,760', 'Video Memory: 32GB GDDR7', 'Memory Interface: 512-bit', 'Memory Speed: 28 Gbps', 'Bus Standard: PCI Express 5.0', 'Price: ₱266,695.00–₱280,000.00', 'Recommended PSU: 1000W (1200W+ for extreme OC or AI workloads)', 'Engine Clock: OC 2655 MHz; Default 2407 MHz (Reference Boost Clock)'] },
+      { id: 'msi-suprim-5080', name: 'MSI SUPRIM 5080', image: 'https://uploads.onecompiler.io/44yjqfzs2/457hkuuaa/MSI5080.webp', specs: ['MSI GeForce RTX 5080 SUPRIM X 16G', 'Graphics Engine: NVIDIA GeForce RTX 5080', 'CUDA Cores: 10,752', 'Video Memory: 16GB GDDR7', 'Memory Interface: 256-bit', 'Memory Speed: 30 Gbps', 'Bus Standard: PCI Express 5.0', 'Price: ₱125,000.00–₱140,000.00', 'Recommended PSU: 850W–1000W', 'Engine Clock: OC 2790 MHz; Default 2760 MHz (Boost Clock)'] },
+      { id: 'asus-tuf-rx9070xt', name: 'ASUS TUF RX9070XT BLACK OPS EDITION', image: 'https://uploads.onecompiler.io/44yjqfzs2/457hkuuaa/907.jpg', specs: ['ASUS TUF Gaming Radeon RX 9070 XT Black Ops 7 Edition 16GB GDDR6', 'Graphics Engine: AMD Radeon RX 9070 XT', 'Stream Processors: 4,096', 'Video Memory: 16GB GDDR6', 'Memory Interface: 256-bit', 'Memory Speed: 20 Gbps', 'Bus Standard: PCI Express 5.0', 'Price: ₱63,545.00–₱68,090.00', 'Recommended PSU: 850W', 'Engine Clock: OC up to 3080 MHz Boost / 2540 MHz Game; Default up to 3060 MHz Boost / 2520 MHz Game'] },
+      { id: 'powercolor-hellhound-9070xt', name: 'POWERCOLOR HELLHOUND RX 9070XT', image: 'https://uploads.onecompiler.io/44yjqfzs2/457hkuuaa/POWER.webp', specs: ['PowerColor Hellhound AMD Radeon RX 9070 XT 16GB GDDR6', 'Graphics Engine: AMD Radeon RX 9070 XT', 'Stream Processors: 4,096', 'Video Memory: 16GB GDDR6', 'Memory Interface: 256-bit', 'Memory Speed: 20 Gbps', 'Bus Standard: PCI Express 5.0', 'Price: ₱59,499.00–₱68,999.00', 'Recommended PSU: 800W', 'Engine Clock: OC up to 3010 MHz Boost / 2460 MHz Game; Silent/Standard up to 2970 MHz Boost / 2400 MHz Game'] },
+      { id: 'msi-vanguard-5090', name: 'MSI VANGUARD 5090', image: 'https://uploads.onecompiler.io/44yjqfzs2/457hkuuaa/MSI5090VAAN.webp', specs: ['MSI GeForce RTX 5090 32G VANGUARD SOC', 'Graphics Engine: NVIDIA GeForce RTX 5090', 'CUDA Cores: 21,760', 'Video Memory: 32GB GDDR7', 'Memory Interface: 512-bit', 'Memory Speed: 28 Gbps', 'Bus Standard: PCI Express 5.0', 'Price: ₱163,950.00–₱164,950.00', 'Recommended PSU: 1000W (1200W+ recommended for OC/heavy load)', 'Engine Clock: OC 2527 MHz (via MSI Center); Default 2512 MHz (Boost Clock)'] },
+      { id: 'aorus-1080ti', name: 'GIGABYTE AORUS XTREME EDITION GTX 1080TI', image: 'https://uploads.onecompiler.io/44yjqfzs2/457hkuuaa/EX1080TI.jpg', specs: ['GIGABYTE AORUS GeForce GTX 1080 Ti Xtreme Edition 11G', 'Graphics Engine: NVIDIA GeForce GTX 1080 Ti', 'CUDA Cores: 3,584', 'Video Memory: 11GB GDDR5X', 'Memory Interface: 352-bit', 'Memory Speed: 11,448 MHz OC / 11,232 MHz Gaming', 'Bus Standard: PCI Express 3.0 x16', 'Price: ₱10,500.00–₱13,500.00 (used market)', 'Recommended PSU: 600W', 'Engine Clock: OC 1632 MHz Boost / 1518 MHz Base; Gaming 1607 MHz Boost / 1493 MHz Base'] }
+    ];
+    const cpuProducts = [
+      { id: 'intel-i9-13900kf', name: 'INTEL I9 13900KF', image: 'https://uploads.onecompiler.io/44yjqfzs2/457hkuuaa/13900KF.jpg', specs: ['Intel Core i9-13900KF', 'Cores / Threads: 24 Cores (8 Performance + 16 Efficient) / 32 Threads', 'Base Clock: 3.00 GHz (P-core) / 2.20 GHz (E-core)', 'Max Turbo Frequency: Up to 5.80 GHz', 'Cache: 36MB Intel Smart Cache (L3) + 32MB L2', 'Socket: LGA1700', 'Base Power / Max Turbo Power: 125W / 253W', 'Price: ₱34,500.00–₱41,275.00'] },
+      { id: 'intel-ultra-9-285k', name: 'INTEL ULTRA 9 285K', image: 'https://uploads.onecompiler.io/44yjqfzs2/457hkuuaa/ULTRA%209%20285K.jpg', specs: ['Intel Core Ultra 9 285K', 'Cores / Threads: 24 Cores (8 Performance + 16 Efficient) / 24 Threads', 'Base Clock: 3.70 GHz (P-core) / 3.20 GHz (E-core)', 'Max Turbo Frequency: Up to 5.70 GHz', 'Cache: 36MB L3 + 40MB L2', 'Socket: LGA1851', 'Base Power / Max Turbo Power: 125W / 250W', 'Price: ₱41,125.00–₱44,650.00'] },
+      { id: 'amd-ryzen-7-7800x3d', name: 'AMD RYZEN 7 7800X3D', image: 'https://uploads.onecompiler.io/44yjqfzs2/457hkuuaa/7800X3D.avif', specs: ['Cores / Threads: 8 Cores / 16 Threads', 'Base Clock: 4.20 GHz', 'Max Boost Clock: Up to 5.00 GHz', 'Cache: 96MB L3 3D V-Cache (104MB total)', 'Socket: AM5', 'TDP: 120W', 'Price: ₱17,495.00–₱21,870.00 (Tray/Boxed Retail in PHP)'] },
+      { id: 'amd-ryzen-9-9950x3d', name: 'AMD RYZEN 9 9950X3D', image: 'https://uploads.onecompiler.io/44yjqfzs2/457hkuuaa/RYZEN%209%209950X3D.jpg', specs: ['AMD Ryzen 9 9950X3D', 'Cores / Threads: 16 Cores / 32 Threads', 'Base Clock: 4.30 GHz', 'Max Boost Clock: Up to 5.70 GHz', 'Cache: 128MB L3 3D V-Cache (144MB total)', 'Socket: AM5', 'TDP: 170W', 'Price: ₱39,495.00–₱43,610.00'] },
+      { id: 'intel-i7-14700kf', name: 'INTEL I7 14700KF', image: 'https://uploads.onecompiler.io/44yjqfzs2/457hkuuaa/14900KF.avif', specs: ['Intel Core i7-14700KF', 'Cores / Threads: 20 Cores (8 Performance + 12 Efficient) / 28 Threads', 'Base Clock: 3.40 GHz (P-core) / 2.50 GHz (E-core)', 'Max Turbo Frequency: Up to 5.60 GHz', 'Cache: 33MB Intel Smart Cache (L3) + 28MB L2', 'Socket: LGA1700', 'Base Power / Max Turbo Power: 125W / 253W', 'Price: ₱23,500.00–₱26,000.00'] },
+      { id: 'intel-i9-14900ks', name: 'INTEL I9 14900KS', image: 'https://uploads.onecompiler.io/44yjqfzs2/457hkuuaa/14900KS.webp', specs: ['Intel® Core™ i9-14900KS', 'Cores / Threads: 24 Cores (8 Performance + 16 Efficient) / 32 Threads', 'Base Clock: 3.20 GHz (P-core) / 2.40 GHz (E-core)', 'Max Turbo Frequency: Up to 6.20 GHz (Thermal Velocity Boost)', 'Cache: 36MB Intel® Smart Cache (L3) + 32MB L2', 'Socket: LGA1700', 'Base Power / Max Turbo Power: 150W / 253W+ (Extreme Power Profile up to 320W)', 'Price: ₱39,480.00–₱47,950.00 (Retail / SRP in PHP)'] },
+      { id: 'intel-ultra-7-275k', name: 'INTEL ULTRA 7 275K', image: 'https://uploads.onecompiler.io/44yjqfzs2/457hkuuaa/ULTRA%207.webp', specs: ['Cores / Threads: 20 Cores (8 Performance + 12 Efficient) / 20 Threads', 'Base Clock: 3.90 GHz (P-core) / 3.30 GHz (E-core)', 'Max Turbo Frequency: Up to 5.50 GHz', 'Cache: 30MB L3 + 36MB L2', 'Socket: LGA1851', 'Base Power / Max Turbo Power: 125W / 250W', 'Price: ₱25,500.00–₱28,900.00'] },
+      { id: 'amd-ryzen-9-9950x3d2', name: 'AMD RYZEN 9 9950X3D2', image: 'https://uploads.onecompiler.io/44yjqfzs2/457hkuuaa/9950X3D2.webp', specs: ['AMD Ryzen 9 9950X3D', 'Cores / Threads: 16 Cores / 32 Threads', 'Base Clock: 4.30 GHz', 'Max Boost Clock: Up to 5.70 GHz', 'Cache: 128MB L3 3D V-Cache (144MB total)', 'Socket: AM5', 'TDP: 170W', 'Price: ₱39,495.00–₱43,610.00'] }
+    ];
+    const ramIcon = 'https://uploads.onecompiler.io/44yjqfzs2/457hkuuaa/ram-icon-vector.jpg';
+    const componentCatalogs = {
+      ram: {
+        title: 'RAM DDR4 / DDR5 Catalog',
+        products: [
+          { id: 'ram-viper-patriot', name: 'VIPER PATRIOT DDR5 32GB (2x16GB) 6000MT/s', image: 'https://uploads.onecompiler.io/44yjqfzs2/457hkuuaa/PAT.jpg', specs: ['Memory Type: DDR5 Desktop UDIMM', 'Capacity: 32GB (2 x 16GB)', 'Tested Speed: 6000 MT/s (PC5-48000)', 'Tested Latency: CL30-40-40-76', 'Voltage: 1.35V', 'Overclocking Support: Intel XMP 3.0 & AMD EXPO', 'Heatspreader: Aluminum Heat Shield (Non-RGB / RGB options)', 'Price: ₱6,450.00–₱7,850.00'] },
+          { id: 'ram-corsair-vengeance-128', name: 'CORSAIR VENGEANCE DDR5 128GB', image: 'https://uploads.onecompiler.io/44yjqfzs2/457hkuuaa/COR.webp', specs: ['Memory Type: DDR5 Desktop UDIMM', 'Capacity: 128GB (4 x 32GB or 2 x 64GB)', 'Tested Speed: 5200–5600 MT/s', 'Tested Latency: CL38 / CL40', 'Tested Voltage: 1.25V–1.35V', 'Overclocking Support: Intel XMP 3.0 / AMD EXPO', 'Heatspreader: Solid Aluminum (RGB option available)', 'Price: ₱25,500.00–₱29,800.00'] },
+          { id: 'ram-tforce-tcreate-128', name: 'T-FORCE / T-CREATE EXPERT DDR5 128GB', image: 'https://uploads.onecompiler.io/44yjqfzs2/457hkuuaa/DEL.webp', specs: ['Memory Type: DDR5 Desktop UDIMM', 'Capacity: 128GB (2 x 64GB or 4 x 32GB)', 'Tested Speed: 6000 MT/s (PC5-48000)', 'Tested Latency: CL34-44-44-84', 'Voltage: 1.35V', 'Overclocking Support: Intel XMP 3.0 & AMD EXPO', 'Heatspreader: Low-profile aluminum (Black / Silver)', 'Price: ₱26,200.00–₱30,500.00'] },
+          { id: 'ram-kingston-ddr5-32', name: 'KINGSTON FURY BEAST DDR5 32GB (2x16GB)', image: 'https://uploads.onecompiler.io/44yjqfzs2/457hkuuaa/KIN.jpg', specs: ['Memory Type: DDR5 Desktop UDIMM', 'Capacity: 32GB (2 x 16GB)', 'Tested Speed: 6000 MT/s (PC5-48000)', 'Tested Latency: CL30-36-36-80', 'Voltage: 1.35V', 'Overclocking Support: Intel XMP 3.0 & AMD EXPO', 'Low-profile aluminum heat spreader', 'Price: ₱6,250.00–₱7,650.00'] },
+          { id: 'ram-kingston-ddr5-64', name: 'KINGSTON FURY BEAST DDR5 64GB (2x32GB)', image: 'https://uploads.onecompiler.io/44yjqfzs2/457hkuuaa/KIN.jpg', specs: ['Memory Type: DDR5 Desktop UDIMM', 'Capacity: 64GB (2 x 32GB)', 'Tested Speed: 6000 MT/s (PC5-48000)', 'Tested Latency: CL30-36-36-80 / CL36-38-38-80', 'Voltage: 1.35V', 'Overclocking Support: Intel XMP 3.0 & AMD EXPO', 'Low-profile aluminum heat spreader', 'Price: ₱12,250.00–₱14,800.00'] },
+          { id: 'ram-kingston-ddr4-32', name: 'KINGSTON FURY BEAST DDR4 32GB (2x16GB)', image: 'https://uploads.onecompiler.io/44yjqfzs2/457hkuuaa/KIN.jpg', specs: ['Memory Type: DDR4 Desktop UDIMM', 'Capacity: 32GB (2 x 16GB)', 'Tested Speed: 3600 MT/s (PC4-28800)', 'Tested Latency: CL18-22-22-39', 'Voltage: 1.35V', 'Overclocking Support: Intel XMP 2.0 / AMD Ryzen ready', 'Asymmetric low-profile heat spreader', 'Price: ₱4,050.00–₱4,850.00'] },
+          { id: 'ram-trident-z5-32', name: 'G.SKILL TRIDENT Z5 RGB DDR5 32GB', image: 'https://uploads.onecompiler.io/44yjqfzs2/457hkuuaa/TR.webp', specs: ['Memory Type: DDR5 Desktop UDIMM', 'Capacity: 32GB (2 x 16GB)', 'Tested Speed: 6000 MT/s (PC5-48000)', 'Tested Latency: CL30-40-40-96 / CL36-36-36-96', 'Voltage: 1.35V–1.40V', 'Overclocking Support: Intel XMP 3.0 / AMD EXPO (Neo)', 'Aluminum heat spreader with translucent light bar', 'Price: ₱7,450.00–₱8,950.00'] },
+          { id: 'ram-trident-z5-64', name: 'G.SKILL TRIDENT Z5 RGB DDR5 64GB', image: 'https://uploads.onecompiler.io/44yjqfzs2/457hkuuaa/TR.webp', specs: ['Memory Type: DDR5 Desktop UDIMM', 'Capacity: 64GB (2 x 32GB)', 'Tested Speed: 6000 MT/s (PC5-48000)', 'Tested Latency: CL30-40-40-96 / CL32-38-38-96 / CL36-36-36-96', 'Voltage: 1.35V–1.40V', 'Overclocking Support: Intel XMP 3.0 / AMD EXPO', 'Aluminum heat spreader with translucent light bar', 'Price: ₱14,250.00–₱16,800.00'] },
+          { id: 'ram-trident-z5-128', name: 'G.SKILL TRIDENT Z5 RGB DDR5 128GB', image: 'https://uploads.onecompiler.io/44yjqfzs2/457hkuuaa/TR.webp', specs: ['Memory Type: DDR5 Desktop UDIMM', 'Capacity: 128GB (4 x 32GB)', 'Tested Speed: 6000 MT/s (PC5-48000)', 'Tested Latency: CL32-38-38-96', 'Voltage: 1.35V', 'Overclocking Support: Intel XMP 3.0', 'Aluminum heat spreader with translucent light bar', 'Price: ₱28,500.00–₱33,200.00'] },
+          { id: 'ram-trident-royal-32', name: 'G.SKILL TRIDENT Z5 ROYAL DDR5 32GB', image: 'https://uploads.onecompiler.io/44yjqfzs2/457hkuuaa/ROYAL.webp', specs: ['Memory Type: DDR5 Desktop UDIMM', 'Capacity: 32GB (2 x 16GB)', 'Tested Speed: 6000 MT/s (PC5-48000)', 'Tested Latency: CL28-36-36-96 / CL30-40-40-96', 'Voltage: 1.35V–1.40V', 'Overclocking Support: Intel XMP 3.0 / AMD EXPO (Royal Neo)', 'CNC-cut mirrored aluminum heat spreader with crystalline lightbar', 'Price: ₱10,500.00–₱12,850.00'] },
+          { id: 'ram-trident-royal-64', name: 'G.SKILL TRIDENT Z5 ROYAL DDR5 64GB', image: 'https://uploads.onecompiler.io/44yjqfzs2/457hkuuaa/ROYAL.webp', specs: ['Memory Type: DDR5 Desktop UDIMM', 'Capacity: 64GB (2 x 32GB)', 'Tested Speed: 6000 MT/s (PC5-48000)', 'Tested Latency: CL28-36-36-96 / CL32-38-38-96', 'Voltage: 1.40V', 'Overclocking Support: Intel XMP 3.0 / AMD EXPO', 'CNC-cut mirrored aluminum heat spreader with crystalline lightbar', 'Price: ₱19,500.00–₱23,800.00'] },
+          { id: 'ram-trident-royal-ddr4', name: 'G.SKILL TRIDENT Z ROYAL DDR4 32GB', image: 'https://uploads.onecompiler.io/44yjqfzs2/457hkuuaa/ROYAL.webp', specs: ['Memory Type: DDR4 Desktop UDIMM', 'Capacity: 32GB (2 x 16GB)', 'Tested Speed: 3600 MT/s (PC4-28800)', 'Tested Latency: CL16-19-19-39 / CL18-22-22-42', 'Voltage: 1.35V', 'Overclocking Support: Intel XMP 2.0', 'Polished aluminum mirror finish with crystalline lightbar', 'Price: ₱6,850.00–₱8,200.00'] }
+        ]
+      },
+      storage: {
+        title: 'Storage Catalog',
+        products: [
+          ...[
+            ['1TB', '₱4,850.00–₱5,950.00', '600 TBW', 'Up to 5,000 / 4,200 MB/s (standard); 7,150 / 6,300 MB/s (Plus)'],
+            ['2TB', '₱8,950.00–₱11,200.00', '1,200 TBW', 'Up to 5,000 / 4,200 MB/s (standard); 7,250 / 6,300 MB/s (Plus)'],
+            ['4TB', '₱18,500.00–₱21,950.00', '2,400 TBW', 'Up to 7,250 / 6,300 MB/s (EVO Plus)']
+          ].map(([size, price, tbw, speeds]) => ({ id: `samsung-evo-${size}`, name: `SAMSUNG 990 EVO / EVO PLUS ${size}`, image: 'https://uploads.onecompiler.io/44yjqfzs2/457hkuuaa/SAMS.jpg', specs: ['Form Factor: M.2 2280 NVMe', 'Interface: PCIe 4.0 x4 / PCIe 5.0 x2', `Sequential read / write: ${speeds}`, `Endurance: ${tbw}`, `Price: ${price}`] })),
+          ...[
+            ['1TB', '₱6,850.00–₱8,200.00', '600 TBW'], ['2TB', '₱11,850.00–₱14,500.00', '1,200 TBW'], ['4TB', '₱23,500.00–₱27,800.00', '2,400 TBW']
+          ].map(([size, price, tbw]) => ({ id: `samsung-pro-${size}`, name: `SAMSUNG 990 PRO ${size}`, image: 'https://uploads.onecompiler.io/44yjqfzs2/457hkuuaa/Samsung_990_Pro_2TB-a_2048x.webp', specs: ['Form Factor: M.2 2280 NVMe', 'Interface: PCIe Gen 4.0 x4', 'Sequential read / write: Up to 7,450 / 6,900 MB/s', `Endurance: ${tbw}`, `Price: ${price}`] })),
+          ...[
+            ['1TB', '₱5,950.00–₱7,200.00', '600 TBW', '7,300 / 6,300 MB/s'], ['2TB', '₱10,850.00–₱13,200.00', '1,200 TBW', '7,300 / 6,600 MB/s'], ['4TB', '₱21,900.00–₱25,500.00', '2,400 TBW', '7,300 / 6,600 MB/s']
+          ].map(([size, price, tbw, speeds]) => ({ id: `wd-black-${size}`, name: `WD BLACK SN850X / SN8100 ${size}`, image: 'https://uploads.onecompiler.io/44yjqfzs2/457hkuuaa/WD.jpg', specs: ['Form Factor: M.2 NVMe', 'Interface: PCIe Gen 4.0 x4 / Gen 5.0', `Sequential read / write: Up to ${speeds} MB/s`, `Endurance: ${tbw}`, `Price: ${price}`] })),
+          ...[
+            ['1TB', '₱9,850.00–₱12,200.00', '600 TBW', '11,700 / 9,500 MB/s'], ['2TB', '₱16,500.00–₱19,800.00', '1,200 TBW', '12,400 / 11,800 MB/s'], ['4TB', '₱31,500.00–₱36,200.00', '2,400 TBW', '12,400 / 11,800 MB/s']
+          ].map(([size, price, tbw, speeds]) => ({ id: `crucial-p510-${size}`, name: `CRUCIAL T700 / P5 ${size}`, image: 'https://uploads.onecompiler.io/44yjqfzs2/457hkuuaa/CRUC.webp', specs: ['Form Factor: M.2 NVMe', 'Interface: PCIe Gen 5.0 / Gen 4.0', `Sequential read / write: Up to ${speeds}`, `Endurance: ${tbw}`, `Price: ${price}`] }))
+        ]
+      },
+      power: {
+        title: 'Power Supply Catalog',
+        products: [
+          { id: 'psu-rog-thor-1200', name: 'ASUS ROG STRIX THOR 1200W PLATINUM', image: 'https://uploads.onecompiler.io/44yjqfzs2/457hkuuaa/THOR.png', specs: ['Total Output: 1200W', 'Efficiency: 80 PLUS Platinum / Cybenetics Platinum', 'Modularity: Fully modular', 'OLED power display, Aura Sync RGB, ATX 3.0/3.1 native 16-pin cable, 135mm fan with 0dB mode', 'Warranty: 10 years', 'Price: ₱21,000.00–₱27,200.00'] },
+          { id: 'psu-super-flower-leadex', name: 'SUPER FLOWER LEADEX VII GOLD / PLATINUM', image: 'https://uploads.onecompiler.io/44yjqfzs2/457hkuuaa/supper.jpg', specs: ['Total Output: 1000W / 1300W', 'Efficiency: 80 PLUS Gold / Cybenetics Platinum', 'Modularity: Fully modular', 'ATX 3.0 & PCIe 5.0 12VHPWR, 140mm FDB fan, dual ECO thermal control, Japanese 105°C capacitors', 'Warranty: 10 years', 'Price: ₱10,200.00–₱11,800.00 (1000W variant)'] },
+          { id: 'psu-gigabyte-p1000gm', name: 'GIGABYTE P1000GM / UD1000GM PG5', image: 'https://uploads.onecompiler.io/44yjqfzs2/457hkuuaa/giga%20ps.jpg', specs: ['Total Output: 1000W', 'Efficiency: 80 PLUS Gold', 'Modularity: Fully modular', '140mm compact depth, PCIe 5.0 12VHPWR cable (PG5), 120mm hydraulic bearing fan, Japanese capacitors', 'Warranty: 10 years', 'Price: ₱7,450.00–₱8,850.00'] },
+          { id: 'psu-msi-mag-a1000gl', name: 'MSI MAG A1000GL PCIE5 / ATX 3.1', image: 'https://uploads.onecompiler.io/44yjqfzs2/457hkuuaa/msi%20mag.webp', specs: ['Total Output: 1000W', 'Efficiency: 80 PLUS Gold', 'Modularity: Fully modular', 'ATX 3.1 & PCIe 5.1, 16-pin 12V-2x6 connector, 135mm FDB fan, compact 150mm length', 'Warranty: 7–10 years', 'Price: ₱8,780.00–₱10,700.00'] }
+        ]
+      },
+      case: {
+        title: 'PC Case Catalog',
+        products: [
+          { id: 'case-lian-li', name: 'LIAN LI CASE', image: 'https://uploads.onecompiler.io/44yjqfzs2/457hkuuaa/LIAN.jpg', specs: ['PC case product image supplied.', 'Specifications and price were not provided.'] },
+          { id: 'case-phanteks', name: 'PHANTEKS CASE', image: 'https://uploads.onecompiler.io/44yjqfzs2/457hkuuaa/PHAN.webp', specs: ['PC case product image supplied.', 'Specifications and price were not provided.'] },
+          { id: 'case-north', name: 'NORTH CASE', image: 'https://uploads.onecompiler.io/44yjqfzs2/457hkuuaa/north.webp', specs: ['PC case product image supplied.', 'Specifications and price were not provided.'] }
+        ]
+      },
+      motherboard: {
+        title: 'Motherboard Catalog',
+        products: [
+          { id: 'motherboard-gigabyte-b550-aorus-elite-ax-v2', name: 'GIGABYTE B550 AORUS ELITE AX V2', image: 'https://uploads.onecompiler.io/44yjqfzs2/457jtj4yp/AORUSB550MAM4.png', specs: ['Socket: AMD AM4', 'Chipset: AMD B550', 'Form factor: ATX', 'CPU support: Ryzen 3000, 4000G, 5000, 5000G', 'RAM type: DDR4', 'RAM slots: 4 DIMM', 'Maximum RAM: 128GB', 'RAM speed: Up to 4733 MHz OC', 'Memory channel: Dual Channel', 'GPU slot: PCIe 4.0 x16', 'M.2 slots: 2', 'SATA ports: 4', 'LAN: 2.5GbE', 'Wi-Fi: Wi-Fi 6E (revision dependent)', 'Bluetooth: Yes', 'Audio: Realtek HD Audio', 'Price: ₱10,450.00'] },
+          { id: 'motherboard-gigabyte-z890m-gaming-x', name: 'GIGABYTE Z890M GAMING X', image: 'https://uploads.onecompiler.io/44yjqfzs2/457jtj4yp/GIGABYTEZ890MINTEL.jpg', specs: ['Socket: Intel LGA1851', 'Chipset: Intel Z890', 'Form factor: Micro-ATX (24.4 × 24.4 cm)', 'CPU support: Intel Core Ultra 200S', 'RAM type: DDR5', 'RAM slots: 4 DIMM', 'Maximum RAM: 256GB', 'Memory speed: Up to 9066 MT/s OC', 'Memory channel: Dual Channel', 'GPU slot: PCIe 5.0 x16', 'Additional slot: PCIe 4.0 x4', 'M.2 slots: 3', 'SATA ports: 4', 'Ethernet: 2.5GbE LAN', 'Audio: Realtek HD Audio', 'Wi-Fi: Not built in', 'RGB: RGB Fusion', 'BIOS: UEFI BIOS', 'Price: ₱11,195.00'] },
+          { id: 'motherboard-colorful-cvn-z890m-frozen-v20', name: 'COLORFUL CVN Z890M GAMING FROZEN V20', image: 'https://uploads.onecompiler.io/44yjqfzs2/457jtj4yp/COLORFULZ890INTEL.jpg', specs: ['Chipset: Intel Z890', 'Socket: LGA 1851', 'CPU: Intel Core Ultra 200S', 'Form factor: Micro-ATX', 'RAM: DDR5', 'RAM slots: 4 DIMM', 'Maximum RAM: 192GB', 'RAM speed: Up to 8400 MT/s OC', 'GPU slot: PCIe 5.0 x16', 'M.2 slots: 5', 'SATA: 4 × SATA 6Gb/s', 'LAN: 2.5Gb Ethernet', 'Wi-Fi: Wi-Fi 6E', 'Bluetooth: 5.3', 'Audio: Realtek ALC897', 'Price: ₱13,450.00'] },
+          { id: 'motherboard-msi-pro-b860m-a-wifi6e', name: 'MSI PRO B860M-A WIFI6E', image: 'https://uploads.onecompiler.io/44yjqfzs2/457jtj4yp/MSIB860MAMD.png', specs: ['Chipset: Intel B860', 'Socket: LGA1851', 'CPU support: Intel Core Ultra 200S', 'Form factor: Micro-ATX', 'RAM: DDR5', 'RAM slots: 2', 'Maximum RAM: 128GB', 'RAM speed: Up to 9066+ MT/s OC', 'GPU slot: PCIe 5.0 x16', 'M.2 slots: 2', 'SATA: 4', 'LAN: 5GbE', 'Wi-Fi: Wi-Fi 7', 'Bluetooth: 5.4', 'Audio: Realtek ALC897', 'Price: ₱11,395.00–₱11,400.00'] },
+          { id: 'motherboard-asus-rog-strix-z790-e', name: 'ASUS ROG STRIX Z790-E GAMING WIFI', image: 'https://uploads.onecompiler.io/44yjqfzs2/457jtj4yp/ROGSTRIXZ790INTEL.png', specs: ['Chipset: Intel Z790', 'Socket: LGA 1700', 'CPU support: Intel 12th, 13th, 14th Gen', 'Form factor: ATX', 'RAM: DDR5', 'RAM slots: 4', 'Maximum RAM: 192GB', 'Memory speed: 7800+ MT/s OC', 'GPU slot: PCIe 5.0 x16', 'M.2 slots: 5', 'SATA: 4', 'Wi-Fi: Wi-Fi 6E', 'LAN: 2.5Gb Ethernet', 'Bluetooth: Yes', 'VRM: 18+1 power stages', 'RGB: Aura Sync', 'Price: ₱26,950.00'] },
+          { id: 'motherboard-asus-rog-maximus-z790-formula', name: 'ASUS ROG MAXIMUS Z790 FORMULA', image: 'https://uploads.onecompiler.io/44yjqfzs2/457jtj4yp/ROGZ790HINTEL.png', specs: ['Chipset: Intel Z790', 'Socket: LGA 1700', 'CPU support: Intel 12th, 13th, 14th Gen', 'Form factor: E-ATX', 'RAM: DDR5', 'RAM slots: 4', 'Maximum RAM: 192GB', 'Memory speed: Up to 8000+ MT/s OC', 'GPU slot: PCIe 5.0 x16', 'M.2 slots: 5', 'SATA: 4', 'Wi-Fi: Wi-Fi 7', 'Bluetooth: 5.4', 'LAN: 10Gb Ethernet', 'Display: OLED LiveDash', 'Cooling: VRM hybrid water-cooling block', 'Price: ₱44,450.00'] },
+          { id: 'motherboard-msi-intel-z790', name: 'MSI INTEL Z790', image: 'https://uploads.onecompiler.io/44yjqfzs2/457jtj4yp/MSIZ790INTEL.jpg', specs: ['Chipset: Intel Z790', 'Socket: LGA 1700', 'CPU support: Intel 12th–14th Gen', 'Form factor: ATX', 'RAM: DDR5', 'RAM slots: 4', 'Maximum RAM: 256GB', 'Memory speed: Up to 7200+ MT/s OC', 'GPU slot: PCIe 5.0 x16', 'M.2 slots: 4', 'SATA: 6', 'Wi-Fi: Wi-Fi 6E', 'Bluetooth: 5.3', 'LAN: 2.5Gb Ethernet', 'Price: ₱15,600.00'] },
+          { id: 'motherboard-asus-rog-strix-x570-e', name: 'ASUS ROG STRIX X570-E GAMING', image: 'https://uploads.onecompiler.io/44yjqfzs2/457jtj4yp/ROGSTRIXX570E.webp', specs: ['Chipset: AMD X570', 'Socket: AM4', 'Form factor: ATX', 'CPU support: Ryzen 2000, 3000, 4000G, 5000', 'RAM type: DDR4', 'RAM slots: 4 DIMM', 'Maximum RAM: 128GB', 'Memory speed: Up to 4400 MHz OC', 'GPU slot: PCIe 4.0 x16', 'M.2 slots: 2', 'SATA ports: 8', 'Ethernet: 2.5Gb + 1Gb LAN', 'Wi-Fi: Wi-Fi 6', 'Bluetooth: 5.0', 'Audio: SupremeFX S1220A', 'RGB: ASUS Aura Sync', 'Power delivery: 12+4 power stages', 'Price: ₱15,500.00'] }
+        ]
+      },
+      fans: { title: 'PC Fans Catalog', products: [] }
+    };
+    function renderComponentCatalog(query = '') {
+      const catalog = componentCatalogs[activeComponentKey];
+      const grid = document.getElementById('component-product-grid');
+      if (!catalog || !grid) return;
+      document.getElementById('component-catalog-title').textContent = catalog.title;
+      const normalizedQuery = query.trim().toLowerCase();
+      const matches = catalog.products.filter(product => product.name.toLowerCase().includes(normalizedQuery));
+      grid.innerHTML = matches.length ? matches.map(product => `<article class="product-tile"><a href="#component-detail" data-component-product="${product.id}"><img src="${product.image}" alt="${product.name}"><span>${product.name}</span></a></article>`).join('') : `<p class="catalog-empty">${activeComponentKey === 'fans' ? 'Fan products are coming soon.' : 'No products match your search.'}</p>`;
+    }
+    function showComponentProduct(product) {
+      activeComponentProduct = product;
+      const hasPrice = getProductPrice(product) > 0;
+      document.getElementById('component-detail-content').innerHTML = `<img src="${product.image}" alt="${product.name}"><div class="product-specs"><h1>${product.name}</h1><ul>${product.specs.map(spec => `<li>${spec}</li>`).join('')}</ul>${hasPrice ? `<button class="button" type="button" data-add-component-cart="${product.id}">ADD TO CART?</button>` : '<p class="form-note">Price unavailable; this item cannot be added to cart yet.</p>'}<p class="form-note" id="component-cart-feedback" aria-live="polite"></p></div>`;
+    }
+    function renderCatalog(query = '') {
+      const grid = document.getElementById('product-grid');
+      if (!grid) return;
+      const matches = products.filter(product => product.name.toLowerCase().includes(query.trim().toLowerCase()));
+      grid.innerHTML = matches.length ? matches.map(product => `<article class="product-tile"><a href="#product-detail" data-product="${product.id}"><img src="${product.image}" alt="${product.name}"><span>${product.name}</span></a></article>`).join('') : '<p class="catalog-empty">No products match your search.</p>';
+    }
+    function renderCpuCatalog(query = '') {
+      const grid = document.getElementById('cpu-product-grid');
+      if (!grid) return;
+      const normalizedQuery = query.trim().toLowerCase();
+      const matches = cpuProducts.filter(product => product.name.toLowerCase().includes(normalizedQuery));
+      grid.innerHTML = matches.length ? matches.map(product => `<article class="product-tile"><a href="#cpu-product-detail" data-cpu-product="${product.id}"><img src="${product.image}" alt="${product.name}"><span>${product.name}</span></a></article>`).join('') : '<p class="catalog-empty">No processors match your search.</p>';
+    }
+    function showCpuProduct(product) {
+      activeCpuProduct = product;
+      const detail = document.getElementById('cpu-product-detail-content');
+      detail.innerHTML = `<img src="${product.image}" alt="${product.name}"><div class="product-specs"><h1>${product.name}</h1><ul>${product.specs.map(spec => `<li>${spec}</li>`).join('')}</ul><button class="button" type="button" data-add-cpu-cart="${product.id}">ADD TO CART?</button><p class="form-note" id="cpu-cart-feedback" aria-live="polite"></p></div>`;
+    }
+    function showProduct(product) {
+      activeProduct = product;
+      const detail = document.getElementById('product-detail-content');
+      detail.innerHTML = `<img src="${product.image}" alt="${product.name}"><div class="product-specs"><h1>${product.name}</h1><ul>${product.specs.map(spec => `<li>${spec}</li>`).join('')}</ul><button class="button" type="button" data-add-cart="${product.id}">ADD TO CART?</button><p class="form-note" id="cart-feedback" aria-live="polite"></p></div>`;
+    }
+    const pesoFormatter = new Intl.NumberFormat('en-PH', { style: 'currency', currency: 'PHP' });
+    function renderTransactions() {
+      const container = document.getElementById('transaction-history');
+      if (!container) return;
+      const email = localStorage.getItem('epctechLoggedInEmail');
+      if (!email) {
+        container.innerHTML = '<p class="transaction-empty">Log in to view your order history.</p>';
+        return;
+      }
+      let transactions = [];
+      try {
+        transactions = JSON.parse(localStorage.getItem('epctechTransactions') || '[]');
+      } catch (error) {
+        transactions = [];
+      }
+      const orders = transactions.filter(order => order.email === email);
+      if (!orders.length) {
+        container.innerHTML = '<p class="transaction-empty">Your transaction history will appear here after you place an order.</p>';
+        return;
+      }
+      container.innerHTML = orders.map(order => `
+        <article class="transaction-card">
+          <h2>Order History</h2>
+          <p class="transaction-order-id">Order ID: ${order.id}</p>
+          <p class="transaction-date">${new Date(order.date).toLocaleString()}</p>
+          <div class="transaction-items">${order.items.map(item => `
+            <div class="transaction-line"><span>${item.quantity}× ${item.name}</span><strong>${pesoFormatter.format(item.price * item.quantity)}</strong></div>
+          `).join('')}</div>
+          <div class="transaction-totals">
+            <div class="transaction-line"><span>Subtotal</span><strong>${pesoFormatter.format(order.subtotal)}</strong></div>
+            <div class="transaction-line"><span>Service Fee</span><strong>${pesoFormatter.format(order.serviceFee)}</strong></div>
+            <div class="transaction-line transaction-total"><span>Total</span><strong>${pesoFormatter.format(order.total)}</strong></div>
+          </div>
+          <p class="transaction-status">Order placed</p>
+        </article>`).join('');
+    }
+    function getProductPrice(product) {
+      const priceSpec = product.specs.find(spec => spec.toLowerCase().startsWith('price:')) || '';
+      const priceMatch = priceSpec.match(/₱\s*([\d,]+(?:\.\d{2})?)/);
+      return priceMatch ? Number(priceMatch[1].replace(/,/g, '')) : 0;
+    }
+    function renderCart() {
+      const container = document.getElementById('cart-items');
+      const groupedItems = cartProducts.reduce((items, product) => {
+        const existing = items.find(item => item.product.id === product.id);
+        if (existing) existing.quantity += 1;
+        else items.push({ product, quantity: 1 });
+        return items;
+      }, []);
+      if (!groupedItems.length) {
+        container.innerHTML = '<p class="cart-empty">YOUR CART IS EMPTY. ADD SOME ITEM FROM THE PARTS SECTION</p>';
+      } else {
+        container.innerHTML = groupedItems.map(({ product, quantity }) => `
+          <article class="cart-item" data-quantity="${quantity}">
+            <img src="${product.image}" alt="${product.name}">
+            <div class="cart-item-info"><strong>${product.name}</strong><span>${pesoFormatter.format(getProductPrice(product))}</span><small>${quantity} ${quantity === 1 ? 'Pc' : 'Pcs'}</small></div>
+            <button class="remove-cart-item" type="button" data-remove-cart="${product.id}" aria-label="Remove ${product.name} from cart">×</button>
+          </article>`).join('');
+      }
+      const subtotal = cartProducts.reduce((sum, product) => sum + getProductPrice(product), 0);
+      document.getElementById('cart-subtotal').textContent = pesoFormatter.format(subtotal);
+      document.getElementById('cart-total').textContent = pesoFormatter.format(subtotal);
+      document.getElementById('checkout-note').textContent = '';
+    }
+    function showPage(page, updateHash = true) {
+      let destination = pageIds.includes(page) ? page : 'login';
+      if (destination === 'product-detail' && !activeProduct) destination = 'gpu-catalog';
+      if (destination === 'cpu-product-detail' && !activeCpuProduct) destination = 'cpu-catalog';
+      if (destination === 'component-detail' && !activeComponentProduct) destination = 'component-catalog';
+      const previousPage = document.querySelector('.view.active')?.id || null;
+      document.querySelectorAll('.view').forEach(view => view.classList.toggle('active', view.id === destination));
+      if (destination === 'transaction') renderTransactions();
+      document.querySelectorAll('.topbar a').forEach(link => link.classList.toggle('active', link.dataset.page === destination || (['learn-more', 'build-options', 'explore-parts', 'gpu-catalog', 'product-detail', 'cpu-catalog', 'cpu-product-detail', 'component-catalog', 'component-detail'].includes(destination) && link.dataset.page === 'home')));
+      if (updateHash && location.hash !== '#' + destination) {
+        history.pushState({ appPage: destination, previousPage }, '', '#' + destination);
+      }
+      window.scrollTo(0, 0);
+    }
+    renderCatalog();
+    renderCpuCatalog();
+    renderComponentCatalog();
+    document.getElementById('product-search').addEventListener('input', event => renderCatalog(event.target.value));
+    document.getElementById('cpu-search').addEventListener('input', event => renderCpuCatalog(event.target.value));
+    document.getElementById('component-search').addEventListener('input', event => renderComponentCatalog(event.target.value));
+    document.addEventListener('click', event => {
+      const removeCartButton = event.target.closest('[data-remove-cart]');
+      if (removeCartButton) {
+        const productId = removeCartButton.dataset.removeCart;
+        const index = cartProducts.findIndex(product => product.id === productId);
+        if (index !== -1) cartProducts.splice(index, 1);
+        renderCart();
+        return;
+      }
+      if (event.target.closest('#checkout-button')) {
+        const checkoutNote = document.getElementById('checkout-note');
+        const email = localStorage.getItem('epctechLoggedInEmail');
+        if (!email) {
+          checkoutNote.textContent = 'Please log in before placing an order. Your cart items will stay here.';
+          return;
+        }
+        if (!cartProducts.length) {
+          checkoutNote.textContent = 'Add an item to your cart before checking out.';
+          return;
+        }
+        const groupedItems = cartProducts.reduce((items, product) => {
+          const existing = items.find(item => item.product.id === product.id);
+          if (existing) existing.quantity += 1;
+          else items.push({ product, quantity: 1 });
+          return items;
+        }, []);
+        const subtotal = cartProducts.reduce((sum, product) => sum + getProductPrice(product), 0);
+        const serviceFee = 0;
+        const order = {
+          id: `EPC-${Date.now().toString(36).toUpperCase()}-${Math.random().toString(36).slice(2, 6).toUpperCase()}`,
+          date: new Date().toISOString(),
+          email,
+          items: groupedItems.map(({ product, quantity }) => ({ name: product.name, quantity, price: getProductPrice(product) })),
+          subtotal,
+          serviceFee,
+          total: subtotal + serviceFee
+        };
+        let transactions = [];
+        try {
+          transactions = JSON.parse(localStorage.getItem('epctechTransactions') || '[]');
+          if (!Array.isArray(transactions)) transactions = [];
+        } catch (error) {
+          transactions = [];
+        }
+        transactions.unshift(order);
+        localStorage.setItem('epctechTransactions', JSON.stringify(transactions));
+        cartProducts.length = 0;
+        renderCart();
+        showPage('transaction');
+        return;
+      }
+      const componentAddButton = event.target.closest('[data-add-component-cart]');
+      if (componentAddButton) {
+        const product = Object.values(componentCatalogs).flatMap(catalog => catalog.products).find(item => item.id === componentAddButton.dataset.addComponentCart);
+        if (product) {
+          cartProducts.push(product);
+          renderCart();
+          document.getElementById('component-cart-feedback').textContent = `${product.name} added to your cart.`;
+        }
+        return;
+      }
+      const componentProductLink = event.target.closest('[data-component-product]');
+      if (componentProductLink) {
+        event.preventDefault();
+        componentCatalogScrollTop = window.scrollY;
+        activeComponentProduct = Object.values(componentCatalogs).flatMap(catalog => catalog.products).find(item => item.id === componentProductLink.dataset.componentProduct) || null;
+        if (activeComponentProduct) {
+          showComponentProduct(activeComponentProduct);
+          showPage('component-detail');
+        }
+        return;
+      }
+      const cpuAddButton = event.target.closest('[data-add-cpu-cart]');
+      if (cpuAddButton) {
+        const product = cpuProducts.find(item => item.id === cpuAddButton.dataset.addCpuCart);
+        if (product) {
+          cartProducts.push(product);
+          renderCart();
+          document.getElementById('cpu-cart-feedback').textContent = `${product.name} added to your cart.`;
+        }
+        return;
+      }
+      const addButton = event.target.closest('[data-add-cart]');
+      if (addButton) {
+        const product = products.find(item => item.id === addButton.dataset.addCart);
+        if (product) {
+          cartProducts.push(product);
+          renderCart();
+          document.getElementById('cart-feedback').textContent = `${product.name} added to your cart.`;
+        }
+        return;
+      }
+      const productLink = event.target.closest('[data-product]');
+      if (productLink) {
+        event.preventDefault();
+        catalogScrollTop = window.scrollY;
+        const product = products.find(item => item.id === productLink.dataset.product);
+        if (product) {
+          showProduct(product);
+          showPage('product-detail');
+        }
+        return;
+      }
+      const cpuProductLink = event.target.closest('[data-cpu-product]');
+      if (cpuProductLink) {
+        event.preventDefault();
+        cpuCatalogScrollTop = window.scrollY;
+        const product = cpuProducts.find(item => item.id === cpuProductLink.dataset.cpuProduct);
+        if (product) {
+          showCpuProduct(product);
+          showPage('cpu-product-detail');
+        }
+        return;
+      }
+      const componentCategoryLink = event.target.closest('[data-component-key]');
+      if (componentCategoryLink) {
+        event.preventDefault();
+        activeComponentKey = componentCategoryLink.dataset.componentKey;
+        document.getElementById('component-search').value = '';
+        renderComponentCatalog();
+        showPage('component-catalog');
+        return;
+      }
+      const link = event.target.closest('[data-page]');
+      if (!link) return;
+      event.preventDefault();
+      const returnToGpuCatalog = link.dataset.page === 'gpu-catalog' && location.hash === '#product-detail';
+      const returnToCpuCatalog = link.dataset.page === 'cpu-catalog' && location.hash === '#cpu-product-detail';
+      const returnToComponentCatalog = link.dataset.page === 'component-catalog' && location.hash === '#component-detail';
+      showPage(link.dataset.page);
+      if (returnToGpuCatalog) window.scrollTo(0, catalogScrollTop);
+      if (returnToCpuCatalog) window.scrollTo(0, cpuCatalogScrollTop);
+      if (returnToComponentCatalog) window.scrollTo(0, componentCatalogScrollTop);
+    });
+    window.addEventListener('popstate', event => {
+      const page = event.state?.appPage || location.hash.slice(1) || 'login';
+      showPage(page, false);
+      if (page === 'gpu-catalog' && activeProduct) window.scrollTo(0, catalogScrollTop);
+      if (page === 'cpu-catalog' && activeCpuProduct) window.scrollTo(0, cpuCatalogScrollTop);
+      if (page === 'component-catalog' && activeComponentProduct) window.scrollTo(0, componentCatalogScrollTop);
+    });
+    const initialPage = location.hash.slice(1) || 'login';
+    showPage(initialPage, false);
+    history.replaceState({ appPage: initialPage, previousPage: null }, '', location.hash || '#' + initialPage);
+    const accountEmail = document.getElementById('account-email');
+    const accountStatus = document.getElementById('account-status');
+    const accountLoginLink = document.getElementById('account-login-link');
+    const logoutButton = document.getElementById('logout-button');
+    const userNavLink = document.getElementById('user-nav-link');
+    function updateAccountStatus() {
+      const email = localStorage.getItem('epctechLoggedInEmail');
+      const loggedIn = Boolean(email);
+      accountStatus.textContent = loggedIn ? 'You are logged in.' : 'You are not logged in.';
+      accountEmail.textContent = loggedIn ? `Signed in as ${email}` : '';
+      accountLoginLink.hidden = loggedIn;
+      logoutButton.hidden = !loggedIn;
+      userNavLink.textContent = loggedIn ? 'ACCOUNT · LOGGED IN' : 'ACCOUNT · NOT LOGGED IN';
+    }
+    updateAccountStatus();
+    logoutButton.addEventListener('click', () => {
+      localStorage.removeItem('epctechLoggedInEmail');
+      updateAccountStatus();
+    });
+
+    document.getElementById('login-form').addEventListener('submit', event => {
+      event.preventDefault();
+      const email = event.target.elements.email.value.trim();
+      localStorage.setItem('epctechLoggedInEmail', email);
+      updateAccountStatus();
+      document.getElementById('login-note').textContent = 'You are now logged in.';
+      showPage('home');
+    });
+    document.getElementById('signup-form').addEventListener('submit', event => {
+      event.preventDefault();
+      document.getElementById('signup-note').textContent = 'Your account details have been submitted.';
+    });
+    document.querySelector('.forgot').addEventListener('click', event => {
+      event.preventDefault();
+      document.getElementById('login-note').textContent = 'Please enter your email address to reset your password.';
+      document.querySelector('#login-form [name="email"]').focus();
+    });
+  </script>
+  <script src="script1.js"></script>
+</body>
+</html>
